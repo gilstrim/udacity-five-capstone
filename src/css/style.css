@@ -1,0 +1,95 @@
+.form-group {
+    margin: 0;
+}
+
+#map {
+    height: 100%;
+}
+
+.full {
+    background: url('../img/background.jpg') no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    -o-background-size: cover;
+}
+
+@font-face {
+    font-family: 'Roboto';
+    src: url('../fonts/Roboto-Regular.eot');
+    src: url('../fonts/Roboto-Regular.woff2') format('woff2'), url('../fonts/Roboto-Regular.woff') format('woff'), url('../fonts/Roboto-Regular.ttf') format('truetype');
+    font-weight: 300;
+}
+
+html {
+    line-height: 1.5;
+    font-family: "Roboto";
+    font-weight: normal;
+    color: rgba(0, 0, 0, 0.87);
+}
+
+#divAddSightingContainer textarea,
+#divAddSightingContainer select,
+#divAddSightingContainer input {
+    font-size: 14px;
+}
+
+#divViewSightingContainer textarea,
+#divViewSightingContainer select,
+#divViewSightingContainer input {
+    font-size: 14px;
+}
+
+/* Solution for placehold styling based on solution from @Aperçu at http://stackoverflow.com/questions/14524328/changing-font-family-for-placeholder */
+#divAddSightingContainer input::-webkit-input-placeholder {
+    /* Chrome/Opera/Safari */
+    font-size: 14px;
+}
+
+#divAddSightingContainer input::-moz-placeholder {
+    /* Firefox 19+ */
+    font-size: 14px;
+}
+
+#divAddSightingContainer input:-ms-input-placeholder {
+    /* IE 10+ */
+    font-size: 14px;
+}
+
+#divAddSightingContainer input:-moz-placeholder {
+    /* Firefox 18- */
+    font-size: 14px;
+}
+
+@font-face {
+    font-family: 'Cabin';
+    src: url('../fonts/cabin/Cabin-Regular.ttf') format('truetype');
+    font-weight: 300;
+}
+
+@font-face {
+    font-family: 'Ubuntu';    
+    src: url('../fonts/ubuntu/Ubuntu-Regular.ttf') format('truetype');
+    font-weight: 300;
+}
+
+/* code for vertical centering from https://css-tricks.com/centering-css-complete-guide/ */
+.landingPages {
+    width: 70%;
+    position: absolute; 
+    top: 50%; 
+    left: 50%; 
+    transform: translate(-50%, -50%); 
+    padding: 5% 5% 5% 5%;
+}
+
+.landingPages h1 {
+    font-family: "Cabin";
+    font-weight: normal;
+}
+
+
+.landingPages h2, .landingPages h3, .landingPages h4 {
+    font-family: "Ubuntu";
+    font-weight: normal;
+}

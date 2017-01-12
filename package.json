@@ -1,0 +1,25 @@
+{
+  "name": "gamereviewer",
+  "version": "1.0.0",
+  "description": "Senior Web Developer Nanodegree - Project 5 - My Game Viever",
+  "main": "src/index.html",
+  "scripts": {
+  },
+  "author": "Justin Leonard",
+  "license": "ISC",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-browser-sync": "^2.2.0",
+    "grunt-contrib-clean": "^1.0.0",
+    "grunt-contrib-concat": "^1.0.1",
+    "grunt-contrib-copy": "^1.0.0",
+    "grunt-contrib-cssmin": "^0.14.0",
+    "grunt-contrib-imagemin": "^1.0.0",
+    "grunt-contrib-jshint": "^1.0.0",
+    "grunt-contrib-uglify": "^0.11.1",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-processhtml": "^0.3.13",
+    "grunt-replace": "^1.0.1",
+    "grunt-string-replace": "^1.2.1"
+  }
+}

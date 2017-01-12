@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MY.SAFARI.VIEWER</title>
+
+    <!-- CSS References -->
+
+    <!-- build:css css/app.min.css -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap-material-design.min.css" rel="stylesheet">
+    <link href="css/ripples.min.css" rel="stylesheet">
+    <link href="css/bootstrap-accessibility.css" rel="stylesheet">
+    <link href="css/animate.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <!-- /build -->
+</head>
+
+<body class="full">
+    <nav class="navbar navbar-default navbar-static-top" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-inverse-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="index.html">MY.SAFARI.VIEWER</a>
+            </div>
+            <div class="navbar-collapse collapse navbar-inverse-collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="#">Latest Sightings</a></li>
+                    <li><a href="#">Add Sighting</a></li>
+                    <li><a href="#">View Sightings</a></li>
+                    <li><a href="#">About</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right" aria-hidden="true">
+                    <div id="onlineIcon" class="navbar-brand">ONLINE</div>
+                    <div id="offlineIcon" class="navbar-brand">OFFLINE</div>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Landing text block -->
+    <div id="divLandingText" class="landingPages">
+        <hr />
+        <h1 style="color: white; text-align: center;"><b>M Y . S A F A R I . V I E W E R</b></h1>
+        <hr />
+        <br />
+        <h4 style="color: white; text-align: center; width: 100%;">A safari sighting application for the Big-5 Pilanesberg National Park in South Africa</h4>
+        <br />
+        <hr />
+        <br />
+        <div class="row container-fluid text-center">
+            <button class="btn btn-default btn-raised" id="btnGetStarted">GET.STARTED</button>
+            <button class="btn btn-default btn-raised" id="btnAboutUs">ABOUT.US</button>            
+        </div>
+    </div>
+
+    <!-- Landing selection block -->
+    <div id="divLandingSelection" class="landingPages" style="display: none;">
+        <hr />
+        <h1 style="color: white; text-align: center;"><b>W H A T . W O U L D . Y O U . L I K E . T O . D O ?</b></h1>
+        <hr />
+        <br />
+        <h4 style="color: white; text-align: center; width: 100%;">Please select one of the following options below OR can use the navigation bar above.</h4>
+        <br />
+        <hr />
+        <div class="row container-fluid text-center">       
+            <div class="col-md-4">     
+                <button class="btn btn-default btn-raised" id="btnOpenViewLatestSightings" aria-labelledby="viewLatestSightingsInfo">VIEW.LATEST.SIGHTINGS</button><h5 id="viewLatestSightingsInfo" style="color: white; text-align: center; width: 100%;">View the latest sightings in the park.</h5>
+            </div>
+            <div class="col-md-4">     
+                <button class="btn btn-default btn-raised" id="btnOpenViewAddSightings" aria-labelledby="addSightingsInfo">ADD.A.SIGHTING</button><h5 id="addSightingsInfo" style="color: white; text-align: center; width: 100%;">Add your own sighting!</h5>
+            </div>
+            <div class="col-md-4">     
+                <button class="btn btn-default btn-raised" id="btnOpenViewSightings" aria-labelledby="viewSearchSightingsInfo">SEARCH.A.SIGHTING</button><h5 id="viewSearchSightingsInfo" style="color: white; text-align: center; width: 100%;">Search for sightings within a period.</h5>
+            </div>                        
+        </div>
+    </div>
+
+    <main>
+                
+        <div class="row container-fluid" style="opacity: 0.9;">            
+
+            <!-- Div containing the latest sightings -->
+            <div id="divLatestSightingsContainer" style="display: none;">
+
+                <!-- List of latest sightings -->
+                <section class="col-md-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">LATEST.SIGHTINGS</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div id="divLatestSightings" class="list-group"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Map to display latest sightings -->
+                <section class="col-md-6" id="latestSightingsMap">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">LATEST.SIGHTINGS.MAP [Click a marker to view a sighting]</h3>
+                        </div>
+                        <div class="panel-body">
+                            <p id="latestSightingMapMessage">Sorry! This map isn't available in offline mode.</p>
+                            <div id="map" style="height: 500px; width: 100%;"></div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Div containing the addition of a sighting -->
+            <div id="divAddSightingContainer" style="display: none;">
+
+                <!-- Adding game sightings -->
+                <section class="col-md-12">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">ADD.GAME.SIGHTING</h3>
+                        </div>
+                        <div class="panel-body">
+                            <form id="formAddReview" role="form" data-toggle="validator">
+                                <p class="text-center">Use the below form to capture a new sighting based on your current location.</p>
+                                <hr />
+                                <div class="form-group col-md-6">
+                                    <label for="cboAnimalType" class="control-label">Animal Type</label>
+                                    <select class="form-control" id="cboAnimalType" name="animalType" required data-error="Please select a type of animal to add.">
+                                        <option value="" disabled selected>Choose a type of animal</option>
+                                        <option value="ELEPHANT">Elephant</option>
+                                        <option value="HIPPO">Hippo</option>
+                                        <option value="IMPALA">Impala</option>
+                                        <option value="LEOPARD">Leopard</option>
+                                        <option value="LION">Lion</option>
+                                    </select>
+                                    <div class="help-block with-errors"></div>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="fileUploadSighting" class="control-label">Upload Image</label>
+                                    <div>
+                                        <input type="text" name="imageUpload" readonly tabindex="-1" class="form-control" placeholder="Select image to upload.">
+                                        <input type="file" id="fileUploadSighting" class="form-control" required data-error="Please select an image to upload.">
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="cboSightingLocation" class="control-label">Location Capture Preference</label>
+                                    <select class="form-control" id="cboSightingLocation" name="location" required data-error="Please select how you would like to capture your location info.">
+                                        <option value="" disabled selected>Choose how you would like to capture your current location</option>
+                                        <option value="AUTO">Automatically use current location</option>
+                                        <option value="MAP">Capture via Map Selection</option>
+                                        <option value="MANUAL">Enter Coordinates Manually</option>
+                                    </select>
+                                    <div class="help-block with-errors"></div>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="txtSubmittedBy" class="control-label">Submitted By</label>
+                                    <input id="txtSubmittedBy" type="text" name="name" placeholder="e.g. John Doe" class="form-control" required data-error="Please complete the submitted by field." />
+                                    <div class="help-block with-errors"></div>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="txtSightingLatitude" class="control-label">Latitude</label>
+                                    <input id="txtSightingLatitude" type="number" step="any" class="form-control" name="sightingLatitude" disabled />
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="txtSightingLongitude" class="control-label">Longitude</label>
+                                    <input id="txtSightingLongitude" type="number" step="any" class="form-control" name="sightingLongitude" disabled />
+                                </div>
+                                <div class="form-group col-md-12" style="padding-bottom: 5%;" >
+                                    <label for="txtSightingDescription" class="control-label">Sighting Description</label>
+                                    <textarea id="txtSightingDescription" class="form-control" rows="2" name="sightingDescription" required data-error="Please complete the description field."></textarea>
+                                    <div class="help-block with-errors"></div>
+                                </div>
+                                <div class="row"></div>                                
+                                <div id="divConnectivityWarning" class="alert alert-dismissible alert-warning col-md-12">
+                                    <button type="button" class="close" data-dismiss="alert">×</button>
+                                    <h4>Oh dear!</h4>
+                                    <p>It seems there is no online connectivity. Please either enable your WiFi or GPS to get your current location or manually capture the coordinates. If niether is possible, then please add additional location info to the description.</p>
+                                </div>
+                                <div id="divOfflineSubmit" class="alert alert-dismissible alert-warning col-md-12">
+                                    <button type="button" class="close" data-dismiss="alert">×</button>
+                                    <h4>Almost there!</h4>
+                                    <p>Your submission is valid. However, because you are offline, your sighting will be uploaded automatically when there is connectivity.</p>
+                                </div>
+                                <div id="divSuccessfulSubmit" class="alert alert-dismissible alert-success col-md-12">
+                                    <button type="button" class="close" data-dismiss="alert">×</button>
+                                    <h4>Well done!</h4>
+                                    <p>Your sighting has been successfully captured for everyone to see!</p>
+                                </div>
+                                <div id="divFailedSubmit" class="alert alert-dismissible alert-danger col-md-12">
+                                    <button type="button" class="close" data-dismiss="alert">×</button>
+                                    <h4>Crumbs!</h4>
+                                    <p>Please ensure that all fields are completed in order to add your sighting!</p>
+                                </div>
+                                <div id="divInvalidCoordinates" class="alert alert-dismissible alert-danger col-md-12">
+                                    <button type="button" class="close" data-dismiss="alert">×</button>
+                                    <h4>Lost?</h4>
+                                    <p>Please ensure that the captured coordinates are within the Pilanesberg National Park!</p>
+                                </div>
+                                <div class="form-group text-center col-md-12">
+                                    <button id="btnSubmitReview" type="button" class="btn btn-raised btn-default" value="Submit Review">SUBMIT.SIGHTING</button>                                    
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Map to capture location of sightings -->
+                <section class="col-md-12" id="sightingsLocationMap" style="display: none;">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">SIGHTINGS.LOCATION.MAP</h3>
+                        </div>
+                        <div class="panel-body">
+                            <p id="addSightingMapMessage">Sorry! This map isn't available in offline mode.</p>
+                            <p id="addSightingMapInfo" class="text-center">Use the map below to mark the region where the sighting was found. This can be done by merely clicking on the map.</p>
+                            <div id="locationMap" style="height: 500px; width: 100%;"></div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Div containing the view of one or more sightings -->
+            <div id="divViewSightingContainer" style="display: none;">
+
+                <!-- Search game sightings -->
+                <section class="col-md-12">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">SEARCH.GAME.SIGHTINGS</h3>
+                        </div>
+                        <div class="panel-body">
+                            <form id="searchSightingForm">
+                                <p class="text-center">Use the below form to search for game sightings within a defined period.</p>
+                                <hr />
+                                <div class="form-group">
+                                    <label for="cboSearchAnimalType" class="control-label">Animal Type</label>
+                                    <select class="form-control" id="cboSearchAnimalType" name="searchAnimalType" required data-error="Please choose an animal type to search for.">
+                                        <option value="" disabled selected>Choose a type of animal to search for</option>
+                                        <option value="ALL">All Animals</option>
+                                        <option value="ELEPHANT">Elephant</option>
+                                        <option value="HIPPO">Hippo</option>
+                                        <option value="IMPALA">Impala</option>
+                                        <option value="LEOPARD">Leopard</option>
+                                        <option value="LION">Lion</option>
+                                    </select>                                    
+                                    <div class="help-block with-errors"></div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="cboSearchPeriod" class="control-label">Period</label>
+                                    <select class="form-control" id="cboSearchPeriod" name="searchPeriod" required data-error="Please choose a period to search for.">
+                                        <option value="" disabled selected>Choose a period to search for</option>
+                                        <option value="24HRS">Last 24 Hours</option>
+                                        <option value="48HRS">Last 48 Hours</option>
+                                        <option value="5DAYS">Last 5 Days</option>
+                                        <option value="WEEK">Last Week</option>
+                                        <option value="MONTH">Last Month</option>
+                                    </select>
+                                    <div class="help-block with-errors"></div>
+                                </div>
+                                <br />
+                                <div class="form-group text-center">
+                                    <button id="btnSubmitSearch" type="button" class="btn btn-default btn-raised" value="Submit Search">SUBMIT.SEARCH</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- List of latest sightings on google map -->
+                <section class="col-md-12" id="divSearchResultsMap" style="display: none;">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">SEARCH.RESULTS</h3>
+                        </div>
+                        <div class="panel-body">
+                            <table class="table table-striped table-hover ">
+                                <thead>
+                                    <tr>
+                                        <th>Animal Type</th>
+                                        <th>Map Legend</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tableBody">
+                                    <tr>
+                                        <td>Lion</td>
+                                        <td><img style="height: 25px;" class="circle" src="img/markers/icon-pink.png" alt="icon"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Elephant</td>
+                                        <td><img style="height: 25px;" class="circle" src="img/markers/icon-green.png" alt="icon"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Impala</td>
+                                        <td><img style="height: 25px;" class="circle" src="img/markers/icon-red.png" alt="icon"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Leopard</td>
+                                        <td><img style="height: 25px;" class="circle" src="img/markers/icon-blue.png" alt="icon"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Hippo</td>
+                                        <td><img style="height: 25px;" class="circle" src="img/markers/icon-black.png" alt="icon"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div id="mapResults" style="height: 500px; width: 100%;"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- List of latest sightings -->
+                <section class="col-md-12" id="divSearchResultsList" style="display: none;">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">SEARCH.RESULTS [Click a marker to view a sighting]</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div id="divSightingSearchResults" class="list-group"></div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Div containing info about the app -->
+            <div id="divAboutContainer" style="display: none;">
+            </div> 
+        </div>
+
+        <!-- Modal -->
+        <div id="modalContainer">
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header text-center">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h2 class="modal-title search-header" id="myModalLabel">ANIMAL.SIGHTING.IMAGE</h2>
+                            <hr />
+                        </div>
+                        <div class="modal-body">
+                            <img src="" style="width: 100%; height: 100%;" class="sightingImage"/>                            
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal" value="Close">CLOSE</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- JS Scripts-->
+    <script src="js/firebase.js"></script>
+    <script>
+        // Initialize Firebase
+        var config = {
+            apiKey: "AIzaSyBYwXYPC4BAZiRaFWNWeJ8GnVQA1wUiQlQ",
+            authDomain: "my-game-viewing-app.firebaseapp.com",
+            databaseURL: "https://my-game-viewing-app.firebaseio.com",
+            storageBucket: "my-game-viewing-app.appspot.com",
+            messagingSenderId: "949532524234"
+        };
+        firebase.initializeApp(config);
+    </script>
+    <script>
+        // determine online and offline capability
+        var isOnline = false;
+
+        // process logic to determine if online or offline
+        var connectedRef = firebase.database().ref(".info/connected");
+        connectedRef.on("value", function(snap) {
+            if (snap.val() === true) {
+                isOnline = true;
+            } else {
+                isOnline = false;
+            }
+        });
+    </script>
+
+    <!-- build:js js/app.min.js -->
+    
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/material.min.js"></script>
+    <script src="js/ripples.min.js"></script>
+    <script src="js/bootstrap-accessibility.min.js"></script>
+    <script src="js/moment.min.js"></script>
+    <script src="js/idb.js"></script>
+    <script src="js/validator.min.js"></script>
+
+    <script src="js/sightingIdb.js"></script>
+    <script src="js/model.js"></script>
+    <script src="js/controller.js"></script>
+    <script src="js/viewLatestSightings.js"></script>
+    <script src="js/viewAddSightings.js"></script>
+    <script src="js/viewAllSightings.js"></script>
+    <script src="js/viewLandingPage.js"></script>
+    <script src="js/viewGeneral.js"></script>
+    <script src="js/init.js"></script>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBYwXYPC4BAZiRaFWNWeJ8GnVQA1wUiQlQ" async defer></script>
+
+    <script>
+        $.material.init();
+
+        // continually check online connectivity
+        //setInterval(function() {
+        //    checkOnlineOffline(true);
+        //}, 30000);
+    </script>
+    <!-- /build -->
+</body>
+
+</html>
