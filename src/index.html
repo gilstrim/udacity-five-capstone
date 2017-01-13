@@ -350,7 +350,8 @@
     <!-- JS Scripts-->
 
     <!-- build:js js/app.min.js -->  
-    <script src="js/firebase.js"></script>            
+    <script src="js/firebase.js"></script>
+    <script src="js/initialiseFirebase.js"></script>            
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/material.min.js"></script>
@@ -370,17 +371,6 @@
     <script src="js/init.js"></script> 
     <!-- /build -->   
 
-    <script>
-        // Initialize Firebase
-        var config = {
-            apiKey: "AIzaSyBYwXYPC4BAZiRaFWNWeJ8GnVQA1wUiQlQ",
-            authDomain: "my-game-viewing-app.firebaseapp.com",
-            databaseURL: "https://my-game-viewing-app.firebaseio.com",
-            storageBucket: "my-game-viewing-app.appspot.com",
-            messagingSenderId: "949532524234"
-        };
-        firebase.initializeApp(config);
-    </script>
     <script>
         // solution from @chad-killingsworth at http://stackoverflow.com/questions/19156086/how-to-load-the-google-maps-api-only-when-my-app-is-navigator-online
         if(navigator.onLine) {
