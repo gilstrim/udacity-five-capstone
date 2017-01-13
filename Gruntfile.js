@@ -108,7 +108,7 @@ module.exports = function(grunt) {
 				}, {
 					expand: true, 
 					cwd: 'src/', 
-					src: ['sw.js','manifest.json'], 
+					src: ['sw.js','manifest.json','icon1.png','icon2.png','icon3.png','icon4.png','icon5.png','icon6.png','icon7.png'], 
 					dest: 'dist/'}
 				]
 			}
