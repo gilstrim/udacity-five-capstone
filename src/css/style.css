@@ -74,13 +74,7 @@ html {
     font-weight: 300;
 }
 
-/* code for vertical centering from https://css-tricks.com/centering-css-complete-guide/ */
-.landingPages {
-    width: 70%;
-    position: absolute; 
-    top: 50%; 
-    left: 50%; 
-    transform: translate(-50%, -50%); 
+.landingPages {     
     padding: 5% 5% 5% 5%;
 }
 

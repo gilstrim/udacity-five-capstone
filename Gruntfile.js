@@ -117,7 +117,7 @@ module.exports = function(grunt) {
 		// job to concatenate multiple files
 		concat: {		  	
 		  	js: {
-		  	  	src: ['src/js/firebase.js','src/js/jquery.min.js','src/js/bootstrap.min.js','src/js/material.min.js','src/js/ripples.min.js','src/js/bootstrap-accessibility.min.js','src/js/moment.min.js','src/js/idb.js','src/js/validator.min.js','src/js/sightingIdb.js','src/js/model.js','src/js/controller.js','src/js/viewLatestSightings.js','src/js/viewAddSightings.js','src/js/viewAllSightings.js','src/js/viewLandingPage.js','src/js/viewGeneral.js','src/js/init.js'],
+		  	  	src: ['src/js/firebase.js','src/js/initialiseFirebase.js','src/js/jquery.min.js','src/js/bootstrap.min.js','src/js/material.min.js','src/js/ripples.min.js','src/js/bootstrap-accessibility.min.js','src/js/moment.min.js','src/js/idb.js','src/js/validator.min.js','src/js/sightingIdb.js','src/js/model.js','src/js/controller.js','src/js/viewLatestSightings.js','src/js/viewAddSightings.js','src/js/viewAllSightings.js','src/js/viewLandingPage.js','src/js/viewGeneral.js','src/js/init.js'],
 		  	  	dest: 'dist/js/app.js',
 		  	  	options: {
 		  		  	separator: ';',

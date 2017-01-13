@@ -35,6 +35,15 @@ viewAddSightings = function () {
             center: Pilanesberg,
             zoom: 11
         });
+
+        // wait for map to fully load
+        google.maps.event.addListenerOnce(map, 'idle', function () {
+            // raise resize event to display map (answered by @philip-miglinci from http://stackoverflow.com/questions/4064275/how-to-deal-with-google-map-inside-of-a-hidden-div-updated-picture?rq=1)
+            window.dispatchEvent(new Event('resize'));
+
+            // reset center
+            map.setCenter(Pilanesberg);
+        });
     };
 
     // function to initialise coordinate values
@@ -95,7 +104,9 @@ viewAddSightings = function () {
                 disableEnableFields(false);
 
                 // initialise the current coordinates
-                initialiseCoordinates(false);
+                if (navigator.onLine) {
+                    initialiseCoordinates(false);
+                }
 
                 break;
             case 'MAP':
@@ -106,7 +117,9 @@ viewAddSightings = function () {
                 sightingsLocationMapDiv.show();
 
                 // initialise the map
-                initialiseMap();
+                if (navigator.onLine) {
+                    initialiseMap();
+                }
 
                 // add click event for the map
                 if (navigator.onLine && typeof (google) !== undefined) {

@@ -1,6 +1,6 @@
 # Senior Web Developer Nanodegree - Project 5 - Capstone Project
 
-This is the fifth project for the Udacity Nanodegree: the capstone project. My capstone project is a safari viewer.
+This is the fifth project for the Udacity Nanodegree program: the capstone project. My capstone project is a safari viewer.
 
 # About the Application
 
@@ -16,7 +16,7 @@ The application provides three core functions:
 - jQuery
 - Firebase (https://firebase.google.com/)
 - Google Maps API (https://developers.google.com/maps/documentation/javascript/)
-- Bootstrap Meterial Design (http://fezvrasta.github.io/bootstrap-material-design/)
+- Bootstrap Material Design (http://fezvrasta.github.io/bootstrap-material-design/)
 - Twitter Bootstrap 3 (http://getbootstrap.com/)
 - Twitter Bootstrap Accessibility Plugin (https://github.com/paypal/bootstrap-accessibility-plugin)
 - Twitter Bootstrap Validator Plugin (https://1000hz.github.io/bootstrap-validator/)
