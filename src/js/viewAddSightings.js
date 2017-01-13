@@ -23,6 +23,7 @@ viewAddSightings = function () {
     var offlineSubmitDiv = $("#divOfflineSubmit");
     var addSightingMapMessage = $("#addSightingMapMessage");
     var addSightingMapInfo = $("#addSightingMapInfo");
+    var refreshButtonControl = $("#btnRefreshConnection");
 
     // function to initialise map
     var initialiseMap = function () {
@@ -50,9 +51,9 @@ viewAddSightings = function () {
             });
         } else {
             alert("Browser doesn't support Geolocation");
-        };
+        }
     };
-
+    
     // function to place a marker on the map
     var addMarker = function (latitude, longitude) {
         // remove existing marker
@@ -112,7 +113,7 @@ viewAddSightings = function () {
                     google.maps.event.addListener(locationMap, 'click', function (event) {
                         addMarker(event.latLng.lat(), event.latLng.lng());
                     });
-                };
+                }
 
                 // set the coordinates to the current location and mark them on the map
                 initialiseCoordinates(true);
@@ -123,7 +124,7 @@ viewAddSightings = function () {
                 disableEnableFields(true);
 
                 break;
-        };
+        }
     };
 
     // function to enable and disable fields
@@ -173,7 +174,10 @@ viewAddSightings = function () {
             // initialise validation fields
             var submitStatusToReturn = '';
             var numErrors = $("#formAddReview > .has-error").length;
-            var numEmptyFields = $("#formAddReview input, #formAddReview select, #formAddReview textarea").filter(function () { return $.trim($(this).val()).length == 0 || $(this).val() === '' }).length;
+            var numEmptyFields = $("#formAddReview input, #formAddReview select, #formAddReview textarea")
+                .filter(function () { 
+                    return $.trim($(this).val()).length === 0 || $(this).val() === ''; 
+            }).length;
 
             // validate coordinates are within the Pilanesberg National Park
             if (navigator.onLine) {
@@ -239,14 +243,14 @@ viewAddSightings = function () {
                     // show invalid coordinates message
                     invalidCoordinatesDiv.show(500);
                 }
-                else { // valid submission
+                else if (isValidSubmission === 'OFFLINE' || isValidSubmission === 'VALID') { // valid submission
                     // hide other messages
                     invalidCoordinatesDiv.hide();
                     failedSubmitDiv.hide();
                     connectivityWarningDiv.hide();
 
                     // call controller to upload a sighting
-                    safariController.addSighting(animalType, imageUrl, latitude, longitude, sightingDescription, username, false);
+                    safariController.addSighting(animalType, imageUrl, latitude, longitude, sightingDescription, moment().format('YYYY-MM-DD hh:mm:ss A'), username, false);
 
                     // show message for successful submission
                     if (isValidSubmission === 'OFFLINE') {
@@ -260,6 +264,44 @@ viewAddSightings = function () {
             });        
     };
 
+    // function to process offline logic
+    var processOfflineLogic = function() {
+        // validate if online or offline
+        if (navigator.onLine) {
+            // hide the connectivity message
+            connectivityWarningDiv.hide();
+        } else {
+            // show the connectivity message
+            connectivityWarningDiv.show(500);
+        }
+    };
+
+    // function to refresh connection to check for GPS coordinates
+    var refreshConnection = function() {
+        // show warning message
+        connectivityWarningDiv.hide(); 
+        
+        // initialise GPS coordinates if the user is online
+        if (navigator.onLine) {
+            // hide / show messages
+            addSightingMapMessage.hide();
+            addSightingMapInfo.show(500);
+
+            // default the location type
+            locationTypeControl.val('AUTO');
+
+            // initialise coordinates
+            initialiseCoordinates(false);            
+        } else {
+            // hide / show messages
+            addSightingMapMessage.show(500);
+            addSightingMapInfo.hide();
+
+            // show warning message
+            connectivityWarningDiv.show(500);        
+        }
+    };
+
     // function to hook events
     var hookEvents = function () {
         // process change of current location usage
@@ -267,12 +309,18 @@ viewAddSightings = function () {
 
         // process addition of a new sighting
         submitSightingButton.on('click', submitSighting);
+
+        // refresh connection
+        refreshButtonControl.on('click', refreshConnection);
     };
 
     // function to initialise the view on the page
     var initialiseView = function () {
         // hide selection landing page
         landingSelectionDiv.hide();
+
+        // set active navigation link
+        $('li a:contains("Add Sighting")').first().parent().addClass('active');        
 
         // hide messages
         connectivityWarningDiv.hide();
@@ -307,6 +355,9 @@ viewAddSightings = function () {
         // validate form on load
         addSightingForm.validator('validate');
 
+        // set focus to first control        
+        setTimeout(function(){ animalTypeControl.focus(); }, 1000);
+
         // hook events
         hookEvents();
     };
@@ -314,6 +365,7 @@ viewAddSightings = function () {
     // expose public methods
     return {
         initialiseView: initialiseView,
-        initialiseMap: initialiseMap
+        initialiseMap: initialiseMap,
+        processOfflineLogic: processOfflineLogic
     };
 } ();

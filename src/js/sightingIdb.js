@@ -26,7 +26,7 @@ sightingsIdb = function () {
 
     // function to get sightings from idb
     var getSightingsFromCache = function () {
-        return dbPromise.then(db => {
+        return dbPromise.then(function(db) {
             return db.transaction(IDB_SIGHTING_OBJECT_STORE)
                 .objectStore(IDB_SIGHTING_OBJECT_STORE).getAll();
         }).then(function (allObjs) {

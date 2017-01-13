@@ -8,6 +8,7 @@
 
 .full {
     background: url('../img/background.jpg') no-repeat center center fixed;
+    background-color: black;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     background-size: cover;
@@ -86,10 +87,74 @@ html {
 .landingPages h1 {
     font-family: "Cabin";
     font-weight: normal;
+    color: white;
+    background-color: transparent;
 }
 
 
 .landingPages h2, .landingPages h3, .landingPages h4 {
     font-family: "Ubuntu";
     font-weight: normal;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.navbar, .navbar.navbar-default {
+    background-color: #00776c;
+    color: #dbeeec;
+}
+
+.panel.panel-primary>.panel-heading {
+    background-color: #00776c;
+    color: #dbeeec;
+}
+
+.panel-title {
+    color:white;
+}
+
+.form-group.has-error .help-block, .form-group.has-error label.control-label {
+    color: #e72400;
+    background-color: #ffffff;
+}
+
+label.control-label {
+    color: #767676;
+}
+
+.alert.alert-danger {
+    background-color: #cd1f00;
+    color: white;
+}
+
+.alert-danger .close {    
+    color: white;
+    opacity: 0.9;
+}
+
+.alert.alert-warning {
+    background-color: #d64200;
+    color: white;
+}
+
+.alert-warning .close {    
+    color: white;
+    opacity: 0.9;
+}
+
+.alert.alert-success  {
+    background-color: #008b00;
+    color: white;
+}
+
+.alert-success .close {    
+    color: white;
+    opacity: 0.9;
+}
+
+.navbar .navbar-nav>.active>a, .navbar .navbar-nav>.active>a:focus, .navbar .navbar-nav>.active>a:hover {
+    background-color: #005750;
+    color: white;
 }

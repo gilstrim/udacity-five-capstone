@@ -13,7 +13,7 @@ module.exports = function(grunt) {
 				files: [{
 					expand: true,
 					cwd: 'dist/js',
-					src: ['*.js','!*.min.js'],
+					src: ['*.js','!*.min.js','vendor/*.js','!vendor/*.min.js'],
 					dest: 'dist/js',
 					ext: '.min.js'
 				}]
@@ -29,7 +29,7 @@ module.exports = function(grunt) {
 				files: [{
 					expand: true,
 					cwd: 'dist/css',
-					src: ['*.css', '!*.min.css'],
+					src: ['*.css', '!*.min.css','vendor/*.css','!vendor/*.min.css'],
 					dest: 'dist/css',
 					ext: '.min.css'
 				}]
@@ -38,14 +38,17 @@ module.exports = function(grunt) {
 		
 		// js validation
 		jshint: {
-			all: ['src/js/*.js', '!src/js/*.min.js']
+			all: ['src/js/*.js', '!src/js/*.min.js', '!src/js/firebase.js', '!src/js/idb.js'],
+			options: {
+				'-W058': true
+			}
 		},
 		
 		// image compression
 		imagemin: {                          
 			dist: {
 				options: {
-					optimizationLevel: 5
+					optimizationLevel: 3
 				},
 				files: [{
 					expand: true,
@@ -63,7 +66,7 @@ module.exports = function(grunt) {
 			},
 			options: {
 				server: {
-					baseDir: "./src/"
+					baseDir: "./dist/"
 				},
 				ghostMode: 
 				{
@@ -97,12 +100,16 @@ module.exports = function(grunt) {
 					cwd: 'src/fonts/', 
 					src: ['**'], 
 					dest: 'dist/fonts'
-				},
-				{
+				}, {
 					expand: true, 
-					cwd: 'src/json/', 
+					cwd: 'src/icons/', 
 					src: ['**'], 
-					dest: 'dist/json/'}
+					dest: 'dist/icons/'
+				}, {
+					expand: true, 
+					cwd: 'src/', 
+					src: ['sw.js','manifest.json'], 
+					dest: 'dist/'}
 				]
 			}
 		},
@@ -110,7 +117,7 @@ module.exports = function(grunt) {
 		// job to concatenate multiple files
 		concat: {		  	
 		  	js: {
-		  	  	src: ['src/js/jquery.min.js','src/js/bootstrap.min.js','src/js/bootstrap-accessibility.min.js','src/js/validator.min.js','src/js/config.js','src/js/controller.js','src/js/model.js','src/js/view.js','src/js/init.js'],
+		  	  	src: ['src/js/firebase.js','src/js/jquery.min.js','src/js/bootstrap.min.js','src/js/material.min.js','src/js/ripples.min.js','src/js/bootstrap-accessibility.min.js','src/js/moment.min.js','src/js/idb.js','src/js/validator.min.js','src/js/sightingIdb.js','src/js/model.js','src/js/controller.js','src/js/viewLatestSightings.js','src/js/viewAddSightings.js','src/js/viewAllSightings.js','src/js/viewLandingPage.js','src/js/viewGeneral.js','src/js/init.js'],
 		  	  	dest: 'dist/js/app.js',
 		  	  	options: {
 		  		  	separator: ';',
@@ -118,7 +125,7 @@ module.exports = function(grunt) {
 		  		}
 		  	},
 		  	css: {
-		  	  	src: ['src/css/bootstrap.css','src/css/bootstrap-accessibility.css','src/css/style.css'],
+		  	  	src: ['src/css/bootstrap.min.css','src/css/bootstrap-material-design.min.css','src/css/ripples.min.css','src/css/bootstrap-accessibility.css','src/css/animate.css','src/css/style.css'],
 		  	  	dest: 'dist/css/app.css',
 		  	  	options: {
 		  		  	separator: ';',
@@ -131,6 +138,23 @@ module.exports = function(grunt) {
 		clean: {
   			js: ['dist/js/*.js','!dist/js/*.min.js'],
   			css: ['dist/css/*.css','!dist/css/*.min.css']
+		},
+		
+		// replace variables between environments
+		replace: {
+			dist: {
+				options: {
+					patterns: [
+					{
+						match: 'srcCacheFiles)',
+						replacement: 'distCacheFiles)'
+					}],
+					usePrefix: false
+				},
+				files: [
+					{expand: true, flatten: true, src: ['src/sw.js'], dest: 'dist/'}
+				]
+			}
 		}
 	});	
 
@@ -138,7 +162,7 @@ module.exports = function(grunt) {
 	grunt.registerTask('dev', ['browserSync']);
 	
 	// production tasks
-	grunt.registerTask('release', ['jshint','concat','uglify','cssmin','imagemin','processhtml','copy','clean','browserSync']);
+	grunt.registerTask('release', ['jshint','concat','uglify','cssmin','imagemin','processhtml','copy','clean','replace','browserSync']);
 
 	// load tasks 
 	grunt.loadNpmTasks('grunt-contrib-uglify');

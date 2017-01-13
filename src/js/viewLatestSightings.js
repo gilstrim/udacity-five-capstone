@@ -10,8 +10,7 @@ viewLatestSightings = function() {
     var latestSightingsContainerDiv = $("#divLatestSightingsContainer");
     var landingSelectionDiv = $("#divLandingSelection");
     var latestSightingMapMessage = $("#latestSightingMapMessage");
-    var modalWindow = $("#myModal");    
-    var map;    
+    var map;        
 
     // function to add latest sightings
     var getLatestSightingsFromCache = function(safariSightings) {
@@ -25,7 +24,7 @@ viewLatestSightings = function() {
                 .catch(function (error) {
                     // reject any errors
                     reject('Error configuring latest sightings: ' + error + '; ' + error.stack);
-                });;
+                });
         });
     };
     
@@ -54,36 +53,8 @@ viewLatestSightings = function() {
                     return sightingsIdb.addSightingsToCache(safariSightings, null, false);
                 })
                 .then(function(result) {
-                    // add event to cater for viewing of the image
-                    $(".btnViewImage").on('click', function() {
-                        // retrieve image from firebase
-                        var imageUrl = $(this).data('imagename');
-
-                        // get animal type
-                        var animalType = $(this).data('animaltype');
-
-                        safariController.getDownloadUrlFromImage(imageUrl)
-                            .then(function (urlResult) {
-                                // set image src
-                                modalWindow.find('img')[0].src = urlResult;
-
-                                // set alt text
-                                modalWindow.find('img')[0].alt = animalType;
-
-                                // initialise modal window properties
-                                modalWindow.modal({
-                                    show: true,
-                                    keyboard: true,
-                                    backdrop: 'static'
-                                });        
-
-                                // show modal window
-                                modalWindow.modal('show');
-                            })
-                            .catch(function (error) {
-                                console.log('Error retrieving image from firebase: ' + error);
-                            })                                                                        
-                    });
+                    // process modal click logic
+                    viewGeneral.processModalClickLogic();
                 })            
                 .then(function (result) {
                     // resolve promise
@@ -92,7 +63,7 @@ viewLatestSightings = function() {
                 .catch(function (error) {
                     // reject any errors
                     reject('Error configuring latest sightings: ' + error + '; ' + error.stack);
-                });;
+                });
         });
     };
 
@@ -148,6 +119,9 @@ viewLatestSightings = function() {
     var initialiseView = function() {
         // hide selection landing page
         landingSelectionDiv.hide();       
+
+        // set active navigation link
+        $('li a:contains("Latest Sightings")').first().parent().addClass('active');
 
         // retrieve sightings from cache
         sightingsIdb.getSightingsFromCache()

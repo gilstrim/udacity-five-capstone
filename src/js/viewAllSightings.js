@@ -13,10 +13,14 @@ viewAllSightings = function () {
     var searchSightingForm = $("#searchSightingForm");
     var searchResultsMapDiv = $("#divSearchResultsMap");
     var searchResultsListDiv = $("#divSearchResultsList");
+    var searchResultsControl = $("#divSearchResults");
+    var modalWindow = $("#myModal");
+    var modalButton;
+    var viewImageButton = $(".btnViewImage");
 
     // function to initialise map
     var initialiseMap = function () {
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             // set default coordinates
             var Pilanesberg = { lat: -25.2446384, lng: 27.0853536 };
 
@@ -24,10 +28,10 @@ viewAllSightings = function () {
             map = new google.maps.Map(document.getElementById('mapResults'), {
                 center: Pilanesberg,
                 zoom: 11
-            });               
+            });
 
-             // wait for map to fully load
-            google.maps.event.addListenerOnce(map, 'idle', function(){
+            // wait for map to fully load
+            google.maps.event.addListenerOnce(map, 'idle', function () {
                 // raise resize event to display map (answered by @philip-miglinci from http://stackoverflow.com/questions/4064275/how-to-deal-with-google-map-inside-of-a-hidden-div-updated-picture?rq=1)
                 window.dispatchEvent(new Event('resize'));
 
@@ -35,7 +39,7 @@ viewAllSightings = function () {
                 map.setCenter(Pilanesberg);
 
                 // resolve once map has finished loading
-                resolve(true);                     
+                resolve(true);
             });
         });
     };
@@ -51,31 +55,6 @@ viewAllSightings = function () {
 
         // add marker to array
         markers.push(marker);
-
-        // configure html for info window
-        var contentString = '<div id="content" style="opacity: 1.0;">' +
-            '<div id="sightingInfo">' +
-            '</div>' +
-            '<hr /><h3 id="firstHeading" class="firstHeading">' + sighting.animalType + '</h3><hr />' +
-            '<div id="bodyContent">' +
-            '<p><b>Description: </b><br/>' + sighting.description + '</p>' +
-            '<p><b>Submitted by: </b><br/>' + sighting.submittedBy + ' at ' + sighting.dateTime + '</p>' + 
-            '<p><b>Latitude: </b>' + sighting.latitude + '; <b>Longitude: </b>' + sighting.longitude + '</p><hr />' +
-            '<h3 id="imageHeading" class="firstHeading">IMAGE</h3><hr />' +
-            '<img src="' + imageReference + '" style="width: 100%; height: 100%;" />';
-            '<br/>'
-            '</div>' +
-            '</div>';
-
-        // set info window
-        var infowindow = new google.maps.InfoWindow({
-            content: contentString
-        });
-
-        // add event for marker
-        marker.addListener('click', function () {
-            infowindow.open(map, marker);
-        });
     };
 
     // function to retrieve images from firebase
@@ -97,38 +76,24 @@ viewAllSightings = function () {
         return Promise.all(promises);
     };
 
-    // function to add latest sightings
-    var addAllSightings = function (safariSightings) {
-        return new Promise(function (resolve) {
-            // initialise html
-            var html = '';
+    // function to validate the search form
+    var validateSearchForm = function () {
+        // initialise variables
+        var numErrors = 0;
+        var numEmptyFields = 0;
 
-            // clear latest sighting div
-            sightingSearchResultsDiv.empty();
+        // set values
+        numErrors = $("#searchSightingForm > .has-error").length;
+        numEmptyFields = $("#searchSightingForm input, #searchSightingForm select, #searchSightingForm textarea")
+            .filter(function () { 
+                return $.trim($(this).val()).length === 0 || $(this).val() === '';
+        }).length;
 
-            // form html
-            $.each(safariSightings, function (index, sightingResult) {
-                html += '<div class="list-group-item">';
-                html += '<div class="row-picture">';
-                html += '<img class="circle" src="' + viewGeneral.getThumbnailForAnimalType(sightingResult.animalType) + '" alt="icon">';
-                html += '</div>';
-                html += '<div class="row-content">';
-                html += '<h4 class="list-group-item-heading">' + sightingResult.animalType + '</h4>';
-                html += '<p class="list-group-item-text">' + sightingResult.description + '</p><br/>';
-                html += '<p class="list-group-item-text" style="font-size: 12px;">Submitted by: ' + sightingResult.submittedBy + '</p>';
-                html += '<p class="list-group-item-text" style="font-size: 12px;">Latitude: ' + sightingResult.latitude + '; Longitude: ' + sightingResult.longitude + '</p>';
-                html += '<p class="list-group-item-text" style="font-size: 12px;">Sighting Date/Time: ' + sightingResult.dateTime + '</p>';                
-                html += '</div>';
-                html += '</div>';
-                html += '<div class="list-group-separator"></div>';
-            });
-
-            // append formed html to page
-            sightingSearchResultsDiv.append(html);
-
-            // resolve promise
-            resolve(true);
-        });        
+        // validate results
+        if (numErrors === 0 && numEmptyFields === 0)
+            return true;
+        else
+            return false;
     };
 
     // function to process the search results based on the user's search criteria
@@ -142,57 +107,66 @@ viewAllSightings = function () {
 
         // show error messages on load
         $(".help-block").show();
-        
+
         // validate form input
-        if ($("#searchSightingForm > .has-error").length === 0 &&
-            $("#searchSightingForm input, #searchSightingForm select, #searchSightingForm textarea").filter(function () { return $.trim($(this).val()).length == 0 || $(this).val() === '' }).length === 0) {
+        if (validateSearchForm()) {
+            // retrieve search results
+            safariController.processSearch(animalType, period)
+                .then(function (searchResults) {
+                    // set search results
+                    searchResultsControl.find('p').text('A total of ' + searchResults.length + ' sighting(s) were found!');
+                    searchResultsControl.show(500);
 
-                // retrieve search results
-                safariController.processSearch(animalType, period)
-                    .then(function (searchResults) {
-                        // process offline and online views
-                        if (navigator.onLine) {
-                            // show search results map
-                            searchResultsMapDiv.show(500);
+                    // process offline and online views
+                    if (navigator.onLine) {
+                        // show search results map
+                        searchResultsMapDiv.show(500);
 
-                            // hide search results list
-                            searchResultsListDiv.hide();
+                        // hide search results list
+                        searchResultsListDiv.show(500);
 
-                            // initialise map
-                            initialiseMap()
-                                .then(function (result) {
-                                    // retrieve images for search results from firebase
-                                    getImagesFromFirebase(searchResults)
-                                        .then(function(sightingImageResults) {
-                                            // loop through each sighting
-                                            $.each(searchResults, function (index, sightingResult) {
-                                                // add marker if map exists
-                                                if (typeof map !== 'undefined') {
-                                                    addMarkerToMap(sightingResult, sightingImageResults[index]);
-                                                }
-                                            });
+                        // add cached sightings to view
+                        viewGeneral.configSightingsHtml(searchResults, sightingSearchResultsDiv);
+
+                        // initialise map
+                        initialiseMap()
+                            .then(function (result) {
+                                // retrieve images for search results from firebase
+                                return getImagesFromFirebase(searchResults)
+                                    .then(function (sightingImageResults) {
+                                        // loop through each sighting
+                                        $.each(searchResults, function (index, sightingResult) {
+                                            // add marker if map exists
+                                            if (typeof map !== 'undefined') {
+                                                addMarkerToMap(sightingResult, sightingImageResults[index]);
+                                            }
                                         });
-                                });                        
+                                    });
+                            })
+                            .then(function (result) {
+                                // process modal click logic
+                                viewGeneral.processModalClickLogic();
+                            });
+                    } else {
+                        // show search results map
+                        searchResultsMapDiv.hide();
 
-                        } else {
-                            // show search results map
-                            searchResultsMapDiv.hide();
+                        // hide search results list
+                        searchResultsListDiv.show(500);
 
-                            // hide search results list
-                            searchResultsListDiv.show(500);
-
-                            // add cached sightings to view
-                            addAllSightings(searchResults);
-                        }
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
-        };
+                        // add cached sightings to view
+                        viewGeneral.configSightingsHtml(searchResults, sightingSearchResultsDiv);
+                    }
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        }
     };
 
     // function to hook events
     var hookEvents = function () {
+        // process search button
         searchButtonControl.on('click', processSearchResults);
     };
 
@@ -201,8 +175,17 @@ viewAllSightings = function () {
         // hide selection landing page
         landingSelectionDiv.hide();
 
+        // hide information messages
+        searchResultsControl.hide();
+
+        // set active navigation link
+        $('li a:contains("View Sightings")').first().parent().addClass('active');
+
         // show add sighting container
-        latestSightingsDiv.show(500);  
+        latestSightingsDiv.show(500);
+
+        // set focus to first control        
+        setTimeout(function () { searchAnimalTypeControl.focus(); }, 1000);
 
         // validate form on load
         searchSightingForm.validator('validate');

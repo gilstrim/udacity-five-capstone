@@ -7,6 +7,7 @@ viewLandingPage = function () {
     var landingDiv = $("#divLandingText");
     var selectionLandingDiv = $("#divLandingSelection");
     var viewLatestSightingsControl = $("#btnOpenViewLatestSightings");
+    var aboutContainerDiv = $("#divAboutContainer"); 
 
     // function to process the getting started logic
     var processGettingStarted = function() {
@@ -22,7 +23,14 @@ viewLandingPage = function () {
 
     // function to process the about us logic
     var processAboutUs = function() {
-        console.log('About us...');
+        // hide landing page div
+        landingDiv.hide();
+
+        // add active attribute to relevant tab
+        $('li a:contains("About")').first().parent().addClass('active');
+
+        // initialise view
+        aboutContainerDiv.show(500);
     };
 
     // function to hook events

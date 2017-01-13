@@ -16,22 +16,48 @@ safariController = function () {
     var uploadFirebaseImage = function(imageUrl, isImageBlob) {
         // get a reference to the storage service
         var storageRef = firebase.storage().ref();
-        var imageGuid = generateGuid();	
-        var imageExtension = imageUrl.name.split('.').pop(); // answer from @robert-mullaney at http://stackoverflow.com/questions/680929/how-to-extract-extension-from-filename-string-in-javascript
-	    var imagesRef = storageRef.child('images/' + imageGuid + '.' + imageExtension);
-		
+        var imageGuid = generateGuid();
+        var imageExtension = '';
+        var imagesRef = '';
+
+        // retrieve image extension
+        if (isImageBlob) {
+
+            switch (imageUrl.type) {
+                case 'image/jpeg': {
+                    imageExtension = 'jpg';
+                    break;
+                }
+                case 'image/png': {
+                    imageExtension = 'png';
+                    break;
+                }
+                case 'image/gif': {
+                    imageExtension = 'gif';
+                    break;
+                }
+                case 'image/x-ms-bmp': {
+                    imageExtension = 'bmp';
+                    break;
+                }
+            }
+            
+	        imagesRef = storageRef.child('images/' + imageGuid + '.' + imageExtension);
+        } else {
+            imageExtension = imageUrl.name.split('.').pop(); // answer from @robert-mullaney at http://stackoverflow.com/questions/680929/how-to-extract-extension-from-filename-string-in-javascript
+	        imagesRef = storageRef.child('images/' + imageGuid + '.' + imageExtension);
+        }
+
         // add image to storage and return guid
 		return imagesRef.put(imageUrl)
             .then(function (result) {
                 return imageGuid + '.' + imageExtension;
             });
-    }
+    };
 
     // function to retrieve the cuisine types
-    var addSighting = function (animalType, imageUrl, latitude, longitude, sightingDescription, username, isImageBlob) {
-        // initialise variables
-        var dateTime = moment().format('YYYY-MM-DD hh:mm:ss A');
-        
+    var addSighting = function (animalType, imageUrl, latitude, longitude, sightingDescription, dateTime, username, isImageBlob) {
+                
         // check if a sighting should be uploaded to firebase or to idb
         if (navigator.onLine) {
             // get a reference to the database service
@@ -125,7 +151,7 @@ safariController = function () {
                         safariSearchResults.push(sightingResult);
                     }
                     break;  
-            };
+            }
         });
 
         // return search results
@@ -178,7 +204,7 @@ safariController = function () {
     var initialiseModel = function() {
         // return images from firebase
         return safariModel.initialise();
-    }
+    };  
 
     // expose public methods
     return {

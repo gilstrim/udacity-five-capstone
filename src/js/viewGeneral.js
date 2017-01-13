@@ -10,7 +10,9 @@ viewGeneral = function () {
     var latestSightingsDiv = $("#divLatestSightingsContainer");
     var addSightingDiv = $("#divAddSightingContainer");
     var viewSightingDiv = $("#divViewSightingContainer");
-    var aboutContainerDiv = $("#divAboutContainer"); 
+    var aboutContainerDiv = $("#divAboutContainer");
+    var modalButton;
+    var modalWindow = $("#myModal"); 
 
     // function to retrieve thumbnail URL based on the animal type
     var getThumbnailForAnimalType = function(animalType) {
@@ -34,7 +36,7 @@ viewGeneral = function () {
             case 'IMPALA':
                 thumbnailUrl = 'img/thumbnails/impala-thumb.jpg';
                 break;
-        };
+        }
 
         // return thumbnail url
         return thumbnailUrl;
@@ -62,7 +64,7 @@ viewGeneral = function () {
             case 'IMPALA':
                 mapMarkerlUrl = 'img/markers/icon-red.png';
                 break;
-        };
+        }
 
         // return thumbnail url
         return mapMarkerlUrl;
@@ -131,7 +133,7 @@ viewGeneral = function () {
                 viewSightingDiv.hide();
                 break;
             }
-            case 'About': {
+            case 'About Us': {
                 aboutContainerDiv.hide();
                 break;
             }
@@ -140,7 +142,7 @@ viewGeneral = function () {
                 landingSelectionDiv.hide();
                 break;
             }
-        };
+        }
 
         // hide current div
         switch (navigationText) {
@@ -169,7 +171,7 @@ viewGeneral = function () {
                 viewAllSightings.initialiseView();
                 break;
             }
-            case 'About': {
+            case 'About Us': {
                 // add active attribute to relevant tab
                 $('li a:contains("About")').first().parent().addClass('active');
 
@@ -177,7 +179,55 @@ viewGeneral = function () {
                 aboutContainerDiv.show(500);
                 break;
             }
-        };   
+        }
+    };
+
+    // function to process the modal logc when viewing images
+    var processModalClickLogic = function() {
+        // add event to cater for viewing of the image
+        $(".btnViewImage").on('click', function() {
+            // retrieve image from firebase
+            var imageUrl = $(this).data('imagename');
+
+            // get animal type
+            var animalType = $(this).data('animaltype');
+
+            // set clicked button to be the modal button
+            modalButton = $(this);
+
+            // retrieve URL from firebase
+            safariController.getDownloadUrlFromImage(imageUrl)
+                .then(function (urlResult) {
+                    // set image src
+                    modalWindow.find('img')[0].src = urlResult;
+
+                    // set alt text
+                    modalWindow.find('img')[0].alt = animalType;
+
+                    // initialise modal window properties
+                    modalWindow.modal({
+                        show: true,
+                        keyboard: true,
+                        backdrop: 'static'
+                    });        
+
+                    // show modal window
+                    modalWindow.modal('show');  
+
+                    // set focus once loaded (answered by @david-kirkland from http://stackoverflow.com/questions/15474862/twitter-bootstrap-modal-input-field-focus)
+                    modalWindow.on('shown.bs.modal', function () {
+                        modalWindow.find('.close').first().focus();
+                    });
+
+                    // hook event to revert focus to the button which invoked the modal
+                    modalWindow.on('hidden.bs.modal', function(e) {            
+                        modalButton.focus();
+                    });                
+                })
+                .catch(function (error) {
+                    console.log('Error retrieving image from firebase: ' + error);
+                });                                                     
+        });
     };
 
     // function to hook events
@@ -208,6 +258,7 @@ viewGeneral = function () {
         initialiseView: initialiseView,
         getThumbnailForAnimalType: getThumbnailForAnimalType,
         getMapMarkerForAnimalType: getMapMarkerForAnimalType,
-        configSightingsHtml: configSightingsHtml
+        configSightingsHtml: configSightingsHtml,
+        processModalClickLogic: processModalClickLogic
     };
 } ();

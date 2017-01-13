@@ -29,15 +29,21 @@ var checkOnlineOffline = function(pushContent) {
 	// check if online
 	if (navigator.onLine) {
 		// when app comes online, push offline content to server
-		if (pushContent)
+		if (pushContent) {
 			pushOfflineContentToServer();
+		}
 
 		// process icons
 		onlineIcon.show();
-		offlineIcon.hide();
+		offlineIcon.hide();		
 	} else {
 		onlineIcon.hide();
 		offlineIcon.show();
+	}
+
+	// process offline logic on add sighting page
+	if ($('li.active').find('a').first().text() === 'Add Sighting') {
+		viewAddSightings.processOfflineLogic();
 	}
 };
 
@@ -82,13 +88,14 @@ var pushOfflineContentToServer = function () {
 					var longitude = sightingResult.longitude;
 					var sightingDescription = sightingResult.description;
 					var username = sightingResult.submittedBy;
+					var dateTime = sightingResult.dateTime;
 
 					// convert base 64 image to blob
 					var imageContentType = imageUrl.split(',')[0].replace('data:', '').replace(';base64', '');
-					var imageBlob = b64toBlob(imageUrl.split(',')[1], 'image/jpeg');;
+					var imageBlob = b64toBlob(imageUrl.split(',')[1], imageContentType);
 
 					// call controller to upload a sighting
-					safariController.addSighting(animalType, imageBlob, latitude, longitude, sightingDescription, username, true);
+					safariController.addSighting(animalType, imageBlob, latitude, longitude, sightingDescription, dateTime, username, true);
 				}
 			});
 
@@ -108,12 +115,9 @@ var pushOfflineContentToServer = function () {
 };
 
 // on load functionality
-$(document).ready(function () {
+$(document).ready(function () {		
 	// register service worker
     registerServiceWorker();
-
-	// verify if user is online or offline
-	checkOnlineOffline(false);
 
 	// initialise general app logic
 	viewGeneral.initialiseView();
@@ -124,8 +128,22 @@ $(document).ready(function () {
 	// create idb objects
     sightingsIdb.initPage();
 
+	// verify if user is online or offline
+	checkOnlineOffline(true);
+
 	// retrieve all sightings from firebase and add to the cache
     if (navigator.onLine) {
+		// process logic to determine if online or offline
+        var connectedRef = firebase.database().ref(".info/connected");
+        
+        connectedRef.on("value", function(snap) {
+            if (snap.val() === true) {
+                checkOnlineOffline(true);
+            } else {
+                checkOnlineOffline(false);
+            }
+        });
+
         // retrieve latest sightings from firebase
         safariController.initialiseModel()
 			.then(function (firebaseSightings) {
@@ -136,5 +154,5 @@ $(document).ready(function () {
 			.catch(function (error) {
 				console.log('Error retrieving sightings from Firebase: ' + error);
 			});
-	};
+	}
 });

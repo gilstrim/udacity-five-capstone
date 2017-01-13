@@ -25,7 +25,7 @@ safariModel = function () {
 
                 // sort data (based on answer from @chris-charles at http://stackoverflow.com/questions/19430561/how-to-sort-a-javascript-array-of-objects-by-date)
                 sightingsList.sort(function(a, b) { 
-                    return new Date(b.dateTime).getTime() - new Date(a.dateTime).getTime() 
+                    return new Date(b.dateTime).getTime() - new Date(a.dateTime).getTime();
                 });
 
                 // resolve promise
